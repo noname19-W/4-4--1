@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คำอวยพรพิเศษ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Mitr', sans-serif; }
+
+        body {
+            min-height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('0.2.jpg') center center / cover no-repeat fixed;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body.bonk-shake {
+            animation: bonkShake 0.3s ease-in-out;
+        }
+        @keyframes bonkShake {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-10px, 12px) rotate(-2deg); }
+            50% { transform: translate(10px, -10px) rotate(2deg); }
+            75% { transform: translate(-8px, 8px) rotate(-1deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        .bg-heart {
+            position: fixed;
+            top: 0;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatUpSway ease-in-out forwards;
+            border: 4px solid #ffffff;
+            will-change: transform, opacity;
+        }
+
+        @keyframes floatUpSway {
+            0% { transform: translateY(105vh) translateX(0px) rotate(0deg) scale(0.85); opacity: 0; }
+            10% { opacity: 0.95; }
+            33% { transform: translateY(70vh) translateX(45px) rotate(4deg) scale(0.92); }
+            66% { transform: translateY(35vh) translateX(-45px) rotate(-4deg) scale(0.98); }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-35vh) translateX(20px) rotate(2deg) scale(1.05); opacity: 0; }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            padding: 45px 40px 35px;
+            border-radius: 28px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12);
+            text-align: center;
+            max-width: 500px; 
+            width: 92%;
+            z-index: 10; 
+            position: relative;
+            transition: max-width 0.4s ease, padding 0.4s ease;
+        }
+        
+        .card.large-card { max-width: 750px; }
+
+        .card h1 { 
+            color: #ff4b2b; 
+            font-size: 30px; 
+            margin-bottom: 16px; 
+            font-weight: 600; 
+            line-height: 1.4;
+        }
+        .card p { 
+            color: #444; 
+            font-size: 20px; 
+            line-height: 1.7; 
+            margin-bottom: 24px; 
+            font-weight: 300; 
+        }
+
+        #stage, #dots { position: relative; z-index: 5; }
+
+        .page { animation: fadeIn 0.6s ease forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        .btn {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            font-size: 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 75, 43, 0.4);
+            transition: all 0.3s ease;
+        }
+        .btn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 8px 20px rgba(255, 75, 43, 0.6); }
+        .btn:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
+        .btn.ghost { background: transparent; color: #ff4b2b; box-shadow: none; padding: 12px 18px; }
+
+      
+        .pincode-box { background: rgba(255, 255, 255, 0.85); border-radius: 20px; padding: 20px 16px; margin-bottom: 20px; border: 2px solid #ffe3e8; }
+        .code-display { background: #fff; border: 2px dashed #ff8095; border-radius: 14px; padding: 12px; font-size: 30px; font-weight: 600; letter-spacing: 8px; color: #d63031; min-height: 60px; display: flex; justify-content: center; align-items: center; margin-bottom: 14px; }
+        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; max-width: 320px; margin: 0 auto 12px; }
+        .key-btn { background: #fff; border: 2px solid #ffb8c6; color: #ff4b2b; font-size: 24px; font-weight: 600; height: 60px; border-radius: 50%; cursor: pointer; transition: all 0.15s ease; box-shadow: 0 3px 6px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center; }
+        .key-btn:active { transform: scale(0.92); background: #ff4b2b; color: #fff; }
+        .key-btn.action-btn { border-radius: 16px; font-size: 18px; background: #fff0f3; }
+        .key-btn.confirm-btn { border-radius: 16px; font-size: 18px; background: linear-gradient(to right, #ff416c, #ff4b2b); color: #fff; border: none; }
+        .hint-box { background: #fff9db; border: 1px solid #ffe066; color: #856404; padding: 12px 16px; border-radius: 14px; font-size: 16px; margin-bottom: 16px; display: none; animation: fadeIn 0.3s ease; line-height: 1.5; }
+        .btn-hint { background: #fff0f3; color: #ff4b2b; border: 1px solid #ffc2cf; padding: 8px 20px; border-radius: 20px; font-size: 16px; cursor: pointer; margin-bottom: 16px; }
+
+       
+        .decor-photo-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        .around-photo { position: absolute; width: 220px; height: 130px; border-radius: 16px; border: 5px solid #ffffff; object-fit: cover; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); pointer-events: auto; transition: transform 0.3s ease, z-index 0s; }
+        .around-photo:hover { transform: scale(1.15) rotate(0deg) !important; z-index: 20; }
+        .photo-pos-0 { top: -60px; left: -75px; transform: rotate(-12deg); }   
+        .photo-pos-1 { top: -60px; right: -75px; transform: rotate(12deg); }   
+        .photo-pos-2 { bottom: -50px; left: -75px; transform: rotate(10deg); }  
+        .photo-pos-3 { bottom: -50px; right: -75px; transform: rotate(-10deg); } 
+        .photo-pos-4 { bottom: 150px; right: -170px; transform: rotate(0deg); } 
+        .photo-pos-5 { bottom: 150px; left: -170px; transform: rotate(0deg); }
+
+  
+        .gallery-3-container { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 16px; margin: 16px 0 20px; width: 100%; align-items: center; }
+        .gallery-3-item { width: 100%; border-radius: 14px; border: 4px solid #ffffff; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18); object-fit: contain; background-color: #fff; transition: transform 0.3s ease, z-index 0.2s ease, box-shadow 0.3s ease; cursor: pointer; }
+        .gallery-3-item:hover { transform: scale(1.18); z-index: 30; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3); }
+        .gallery-3-item:nth-child(1) { grid-column: 1; grid-row: 1; max-height: 240px; }
+        .gallery-3-item:nth-child(2) { grid-column: 1; grid-row: 2; max-height: 240px; }
+        .gallery-3-item:nth-child(3) { grid-column: 2; grid-row: 1 / span 2; height: 100%; max-height: 500px; }
+
+     
+        .teacher-profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 24px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 24px;
+            border: 3px solid #ffdde4;
+        }
+        .teacher-img-frame {
+            width: 160px;
+            height: 190px;
+            border-radius: 16px;
+            border: 6px solid #fff;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            overflow: hidden;
+            margin-bottom: 18px;
+            background-color: #f1f2f6;
+        }
+        .teacher-img-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .teacher-name {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ff4b2b;
+            margin-bottom: 6px;
+        }
+        .teacher-position {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 18px;
+            background: #fff0f3;
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid #ffc2cf;
+        }
+        .teacher-message {
+            font-size: 18px;
+            color: #444;
+            line-height: 1.7;
+            text-align: center;
+            font-weight: 300;
+            border-top: 1px dashed #ffb8c6;
+            padding-top: 18px;
+            width: 90%;
+        }
+
+        .credits-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 26px 20px;
+            border-radius: 22px;
+            border: 3px dashed #ff8095;
+            margin-bottom: 20px;
+        }
+        .credits-badge {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            padding: 6px 24px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(255, 75, 43, 0.3);
+        }
+        .credits-avatar-frame {
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            border: 6px solid #ffffff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+            overflow: hidden;
+            margin-bottom: 18px;
+            background-color: #ffeef2;
+        }
+        .credits-avatar-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .credits-name {
+            font-size: 22px;
+            font-weight: 600;
+            color: #d63031;
+            margin-bottom: 6px;
+        }
+        .credits-role {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 16px;
+            font-weight: 400;
+        }
+        .credits-text {
+            font-size: 17px;
+            color: #444;
+            line-height: 1.7;
+            border-top: 1px solid #ffe3e8;
+            padding-top: 16px;
+            width: 95%;
+            font-weight: 300;
+        }
+
+  
+        .scare-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .ghost-img { max-width: 92vw; max-height: 75vh; object-fit: contain; border-radius: 16px; box-shadow: 0 0 40px rgba(255, 0, 0, 0.9); animation: ghostAppear 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transition: transform 0.1s; }
+        @keyframes ghostAppear { from { transform: scale(0.2); } to { transform: scale(1); } }
+        .hero-container { position: absolute; top: -300px; right: 3vw; display: flex; flex-direction: column; align-items: center; animation: heroHit 0.6s 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; z-index: 10000; }
+        @keyframes heroHit { 0% { top: -300px; } 70% { top: 5vh; transform: rotate(-15deg); } 85% { top: 8vh; transform: rotate(10deg); } 100% { top: 5vh; transform: rotate(0deg); } }
+        .hero-img { width: 140px; height: 140px; border-radius: 50%; border: 4px solid #fff; object-fit: cover; box-shadow: 0 8px 20px rgba(255,255,255,0.4); }
+        .stick { font-size: 80px; margin-top: -20px; transform-origin: top right; animation: swingStick 0.3s 1.1s ease-in-out forwards; }
+        @keyframes swingStick { 0% { transform: rotate(0deg); } 50% { transform: rotate(-45deg); } 100% { transform: rotate(35deg); } }
+        .bonk-text { position: absolute; color: #fffa65; font-size: 52px; font-weight: 600; text-shadow: 0 0 10px #ff3838, 3px 3px 0 #000; opacity: 0; z-index: 10001; }
+        .bonk-text.show { animation: bonkPop 0.4s ease forwards; }
+        @keyframes bonkPop { 0% { opacity: 0; transform: scale(0.2) rotate(-20deg); } 50% { opacity: 1; transform: scale(1.4) rotate(10deg); } 100% { opacity: 1; transform: scale(1) rotate(0deg); } }
+
+        .nav { display: flex; justify-content: center; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .dots { display: flex; justify-content: center; gap: 7px; margin-top: 18px; flex-wrap: wrap; }
+        .dots span { width: 10px; height: 10px; border-radius: 50%; background: #ffc2cf; transition: all 0.3s; }
+        .dots span.on { background: #ff4b2b; transform: scale(1.3); }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="cardContainer">
+        <div id="decorWrapper" class="decor-photo-wrapper"></div>
+        <div id="stage"></div>
+        <div class="dots" id="dots"></div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            name: "เก",
+            passcode: "4244",
+            hintText: "💡 คำใบ้: ลองเอาจำนวนเพื่อนในห้องขึ้นต้นและเอาระดับชั้นที่เรียนอยู่ตามดูสิ",
+            pages: [
+                { 
+                    title: "หน้านี้นะครับอยากฝากถึงเวรวันจันทร์นะอิอิ", 
+                    text: "เทอม2อาจจะมีโปรเจคมาทำอยากให้ช่วยๆกันแบ่งเด็กAiเก่ามาให้ก็ถามเด็กAiเก่าก็ได้นะหรือมาถามคนทำเว็ปนี้ก็ได้พร้อมช่วยเสมอนะครับ เวรวันจันทร์💛",
+                    images: ["1.jpg", "1.2.jpg", "1.3.jpg", "1.4.jpg"]
+                },
+                { title: "หน้านี้จะฝากถึงเวรวันอังคารเด้ออ้าย", 
+                  text: "เวรวันนี้มีเด็กAiเก่าอยู่สงสัยชิวแล้วมั้งเนี้ยไว้ใจในรองนะหัวเพื่อนคนอื่นๆด้วยหละ555แต่ก็ถ้ามีโปรเจคเวรจริงๆก็ขอให้แบ่งหน้าที่กันดีๆช่วยๆกันทำโปรเจคด้วยหละถ้าส่วนไหนทำไมไม่ได้ก็เรียกได้เสมอ เวรวันอังคาร🩷" ,
+                  images: ["3.jpg", "3.2.jpg", "3.3.jpg", "3.4.jpg", "3.5.jpg", "3.6.jpg"]
+                },
+                { title: "แล้วก็เวรวันพุธ", 
+                  text: "มาแล้วเวรการสัปดาห์ของการมาเรียนเวรวันนี้ก็คือดีอยู่เด้ออ้ายถ้าได้ทำโปรเจคเป็นเวรจริงๆอยากให้ช่วยๆกันนะเอาเด็กAiมาให้เยอะอยู่นะแต่ถ้าอยากถามเรื่องโค้ดหรือถามอังกฤษนี้ลูกพรี่พอลถ้าได้ทำจริงๆก็ติดตรงไหนถามได้เสมอนะครับ เวรวันพุธ💚" , 
+                  images: ["4.jpg", "4.2.jpg", "4.3.jpg", "4.4.jpg", "4.5.jpg"]
+                },
+                { title: "วันพฤหัสบดีที่ไม่มีรด.แล้ว", 
+                  text: "เวรนี้ไม่ค่อยได้อยู่ด้วยเลยต้องไปเรียนรด.บ่อยแต่ตอนนี้เดียวอยู่หัวเรื่องในห้องแล้วนะครับทำเป็นเล่นเวรนี้เด็กAiเยอะคือแบบเวรนี้สงสัยชิวเด็กจากห้องอื่นตอนม.ต้นถามเด็กAiเก่าได้เลยแบบเชื่อเลยแต่ละคนตอบได้(หละมั้ง5555)เอาเป็นว่าถ้าทำส่วนไหนไม่ได้ก็ถามได้นะครับ เวรวันพฤหัสบดี🧡" ,
+                  images: ["5.jpg", "5.2.jpg", "5.3.jpg", "5.4.jpg", "5.5.jpg", "5.6.jpg"]
+                },
+                { title: "มาแล้วเวรสุดท้ายประจำสัปดาห์แห่งการมาเรียนเวรวันศุกร์", 
+                  text: "เวรวันนี้ไม่อะไรเยอะเดี๋ยวพี่แบกหยอกๆนะก็จริงๆก็เดี๋ยวให้ช่วยๆกันนะถ้าได้มีโปรเจคเวรรักเวรวันนี้สุดละเพราะอยู่เวรวันนี้5555เกิดวันศุกร์ด้วยยิ่งรักเลยก็จริงๆเพื่อนๆเวรวันศุกร์มีปัญหาอะไรก็สามารถเรียกถามได้เสมอนะอยู่เวรวันนี้ช่วยเวรตัวเองก่อนอยู่แล้วหละมั้งนะ 🩵เวรวันศุกร์💙",
+                  images: ["6.jpg", "6.2.jpg", "6.3.jpg", "6.4.jpg", "6.5.jpg", "6.6.jpg"] 
+                },
+                { 
+                    title: "กฎ ตำแหน่งที่นั่ง รายชื่อเวร 📌", 
+                    text: "หน้านี้คือการรวมข้อหัวที่ตั้งไว้มาอยู่ในหน้าเดียวนะครับ อยากให้เพื่อนๆ ช่วยกันรักษากฎด้วยนะครับ",
+                    gallery: [
+                        "10.2.jpg", 
+                        "10.1.jpg",
+                        "10.jpg" 
+                    ]
+                },
+                { 
+                    title: "แด่คุณครูที่ปรึกษา", 
+                    teacherProfile: {
+                        image: "11.jpg", 
+                        name: "นายฐิฏิภัทร์ เดชพิพัฒน์วรกุล", 
+                        position: "ตำแหน่ง/วิทยฐานะ ครูชำนาญการพิเศษ (วิชาคอมพิวเตอร์)", 
+                        message: "ต้องขอขอบคุณสำหรับเรื่องต่างๆที่ผ่านมาในเทอม1มากนะครับคุณครูบอยเนื่องจากเป็นตัวแทนในสถานะหัวหน้าห้องก็ต้องขออภัยในบางครั้งที่พวกผมสร้างปัญหามาให้ด้วยนะครับและผมต้องขออภัยถ้าหากในเทอม1ผมทำหน้าที่หัวหน้าห้องพลาดไปด้วยนะครับ🙏"
+                    }
+                },
+                { 
+                    title: "แด่คุณครูที่ปรึกษา", 
+                    teacherProfile: {
+                        image: "12.jpg", 
+                        name: "นายสหรัฐ ยกย่อง", 
+                        position: "ตำแหน่ง/วิทยฐานะ ครูชำนาญการ (วิชาชีววิทยา)", 
+                        message: "ต้องขอบคุณครูเช่นกันครับที่ได้สอน4/4เทอม1อาจจะเป็นคุณครูแอมที่ส่วนใหญ่จะเป็นคนสอนมากกว่าแต่เทอม2เป็นคุณครูที่สอนก็อยากของ่ายน้อยๆข้อสอบง่ายๆนะครับในส่วนของสถานะหัวหน้าห้องถ้าผมทำอะไรพลาดไปต้องขออภัยด้วยนะครับ🙏" 
+                    }
+                },
+                { 
+                    title: "ส่วนนี้ก็อยากบอกเพื่อนๆทุกคนในห้องนะครับ", 
+                    text: "ในสถานะเพื่อนร่วมห้องก่อนแล้วกันนะต้องขอโทษด้วยนะถ้าบางครั้งทำอะไรให้เพื่อนๆไม่พอใจต้องขอโทษด้วยจริงและในสถานะหัวหน้าห้องบางครั้งอาจจะทำหน้าที่ได้ไม่ดีพอก็ต้องขอโทษด้วยเช่นกันจะพยายามปรับให้เพื่อนๆนะครับขอบคุณสำหรับประสบการณ์ในปีการศึกษา(ภาคเรียนที่1)ด้วยนะครับเว็ปนี้อยากทำให้ทั้งเพื่อนๆทั้งคุณครูนะครับไม่ได้หวังอะไรกลับมาเพราะอยากทำด้วยตัวเองคิดทำวางแผนมาประมาณ4-5เดือนลงมือจริงๆอยู่ในช่วง4-5เดืือนน่าใช้เวลาเขียนโค้ดไป2-3เดือนได้อยู่เว็ปนี้อาจจะไม่ได้ดีทำเท่านะเพื่อนๆสุดท้ายแล้วก็อีกครั้งครับขอบคุณสำหรับประสบการณ์ดีๆด้วยนะครับสำหรับบางคนที่มีหลายๆอย่างที่พลาดในเทอม1เรื่องอะไรต่างๆหลักๆอาจจะเกรดก็อยากบอกว่าอย่าพึ่งยอมแพ้นะสู้ต่อไปฮึดสู้เพราะนี้เทอม2ไม่ใช่เทอม1ยังไงก็ทำได้ดีกว่าเดิมได้ขอแค่ให้ทุกคนตั้งใจนะครับ" 
+                },
+                {
+                    title: "หน้าท้ายแล้ววววว",
+                    credits: {
+                        badge: "CREDITS",
+                        image: "last.jpg", 
+                        name: "นาย วิศรุต เจิดบดีเกษม",
+                        role: "Web Developer & Design",
+                        text: "ต้องขอขอบคุณทุกคนจริงๆนะครับสำหรับเทอม1แล้วก็ขอบคุณสำหรับบางคนที่เข้ามาดูเว็ปและเล่นจนจบมาถึงหน้านี้ด้วยนะครับไม่อะไรแล้วหละขอจบโปรเจคนี้ตอนนี้เลยแล้วกันนะครับ 2 พฤจิกายน 2569 02:50 จริงๆก็อยากบอกทุกคนว่าผมไม่ได้ทำเอง100%หรอกอาจจะมีAiช่วยบางแต่ทำเองเกินครึ่งแน่นอนซึ่งเพื่อนๆก็สามารถทำแบบนี้ได้เช่นกัน"
+                    }
+                }
+            ]
+        };
+
+        const GHOST_IMAGE = "ghost.jpg";      
+        const MY_HERO_IMAGE = "bro.jpg";       
+        const MY_PHOTOS = ["0.jpg", "0.2.jpg", "0.3.jpg", "0.4.jpg", "0.5.jpg", "0.6.jpg", "0.7.jpg", "back.jpg"];
+
+        const stage = document.getElementById('stage');
+        const dotsBox = document.getElementById('dots');
+        const decorWrapper = document.getElementById('decorWrapper');
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const total = CONFIG.pages.length + 1; 
+
+        let current = 0;
+        let unlocked = false;
+
+        function el(tag, cls, text) {
+            const e = document.createElement(tag);
+            if (cls) e.className = cls;
+            if (text) e.textContent = text;
+            return e;
+        }
+
+        function createHeart() {
+            if (reduceMotion) return;
+            const img = document.createElement('img');
+            img.className = 'bg-heart';
+            img.src = MY_PHOTOS[Math.floor(Math.random() * MY_PHOTOS.length)];
+            img.style.left = (5 + Math.random() * 75) + 'vw';
+            const photoSize = 130 + Math.random() * 50;
+            img.style.width = photoSize + 'px';
+            img.style.height = photoSize + 'px';
+            img.style.borderRadius = '18px';
+            img.style.objectFit = 'cover';
+            img.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
+            img.style.animationDuration = (9 + Math.random() * 4) + 's';
+            document.body.appendChild(img);
+            img.addEventListener('animationend', () => img.remove());
+        }
+        setInterval(createHeart, 1800);
+
+        function renderDots() {
+            dotsBox.innerHTML = '';
+            for (let i = 0; i < total; i++) dotsBox.appendChild(el('span', i === current ? 'on' : ''));
+        }
+
+        function renderGame(page) {
+            page.appendChild(el('h1', '', 'เกมถอดรหัสลับ'));
+            page.appendChild(el('p', '', `ถอดตัวเลขจากคำใบ้บอกเลยง่ายมากๆ ${CONFIG.name}`));
+
+            const pincodeBox = el('div', 'pincode-box');
+            page.appendChild(pincodeBox);
+
+            let enteredCode = "";
+            const codeDisplay = el('div', 'code-display', '• • • •');
+            const hintBtn = el('button', 'btn-hint', '💡 กดเพื่อดูคำใบ้');
+            const hintBox = el('div', 'hint-box', CONFIG.hintText);
+            hintBtn.onclick = () => { hintBox.style.display = hintBox.style.display === 'block' ? 'none' : 'block'; };
+            const keypadGrid = el('div', 'keypad-grid');
+
+            function updateDisplay() {
+                if (enteredCode.length === 0) {
+                    codeDisplay.textContent = '• • • •';
+                    codeDisplay.style.color = '#ccc';
+                } else {
+                    codeDisplay.textContent = enteredCode;
+                    codeDisplay.style.color = '#d63031';
+                }
+            }
+
+            for (let i = 1; i <= 9; i++) {
+                const numBtn = el('button', 'key-btn', i.toString());
+                numBtn.onclick = () => {
+                    if (enteredCode.length < 8) { enteredCode += i.toString(); updateDisplay(); }
+                };
+                keypadGrid.appendChild(numBtn);
+            }
+
+            const clearBtn = el('button', 'key-btn action-btn', '⌫');
+            clearBtn.onclick = () => { enteredCode = enteredCode.slice(0, -1); updateDisplay(); };
+            const zeroBtn = el('button', 'key-btn', '0');
+            zeroBtn.onclick = () => { if (enteredCode.length < 8) { enteredCode += '0'; updateDisplay(); } };
+            const confirmBtn = el('button', 'key-btn confirm-btn', 'ตกลง');
+            confirmBtn.onclick = checkCode;
+
+            keypadGrid.append(clearBtn, zeroBtn, confirmBtn);
+
+            function checkCode() {
+                if (enteredCode === CONFIG.passcode) {
+                    unlocked = true;
+                    triggerBonkScene(() => { go(1); });
+                } else {
+                    codeDisplay.style.color = '#dc3545';
+                    setTimeout(() => { enteredCode = ""; updateDisplay(); }, 500);
+                }
+            }
+            pincodeBox.append(codeDisplay, hintBtn, hintBox, keypadGrid);
+            updateDisplay();
+        }
+
+        function triggerBonkScene(callback) {
+            const overlay = el('div', 'scare-overlay');
+            const ghost = document.createElement('img'); ghost.className = 'ghost-img'; ghost.src = GHOST_IMAGE;
+            const heroContainer = el('div', 'hero-container');
+            const heroImg = document.createElement('img'); heroImg.className = 'hero-img'; heroImg.src = MY_HERO_IMAGE;
+            const stick = el('div', 'stick', '🪵');
+            heroContainer.append(heroImg, stick);
+            const bonkTxt = el('div', 'bonk-text', 'โป๊ะ! หัวแตก 💥');
+
+            overlay.append(ghost, heroContainer, bonkTxt);
+            document.body.appendChild(overlay);
+
+            setTimeout(() => {
+                document.body.classList.add('bonk-shake');
+                ghost.style.transform = 'translateY(80px) scale(0.9) rotate(15deg)';
+                bonkTxt.classList.add('show');
+            }, 1300);
+
+            setTimeout(() => {
+                document.body.classList.remove('bonk-shake');
+                overlay.remove();
+                if (callback) callback();
+            }, 3200);
+        }
+
+        function renderWish(page, i) {
+            const w = CONFIG.pages[i];
+            const isLast = i === CONFIG.pages.length - 1;
+
+            if (w.title) page.appendChild(el('h1', '', w.title));
+            if (w.text) page.appendChild(el('p', '', w.text));
+
+            
+            if (w.images && Array.isArray(w.images)) {
+                w.images.forEach((src, index) => {
+                    const img = document.createElement('img');
+                    img.className = `around-photo photo-pos-${index}`;
+                    img.src = src;
+                    decorWrapper.appendChild(img);
+                });
+            }
+
+           
+            if (w.gallery && Array.isArray(w.gallery)) {
+                const galleryBox = el('div', 'gallery-3-container');
+                w.gallery.forEach(src => {
+                    const img = document.createElement('img');
+                    img.className = 'gallery-3-item';
+                    img.src = src;
+                    galleryBox.appendChild(img);
+                });
+                page.appendChild(galleryBox);
+            }
+
+            
+            if (w.teacherProfile) {
+                const t = w.teacherProfile;
+                const tBox = el('div', 'teacher-profile');
+                
+                const imgFrame = el('div', 'teacher-img-frame');
+                const img = document.createElement('img');
+                img.src = t.image;
+                imgFrame.appendChild(img);
+
+                const name = el('div', 'teacher-name', t.name);
+                const pos = el('div', 'teacher-position', t.position);
+                const msg = el('div', 'teacher-message', t.message);
+
+                tBox.append(imgFrame, name, pos, msg);
+                page.appendChild(tBox);
+            }
+
+           
+            if (w.credits) {
+                const c = w.credits;
+                const cBox = el('div', 'credits-container');
+
+                const badge = el('div', 'credits-badge', c.badge);
+                const avatarFrame = el('div', 'credits-avatar-frame');
+                const img = document.createElement('img');
+                img.src = c.image;
+                avatarFrame.appendChild(img);
+
+                const name = el('div', 'credits-name', c.name);
+                const role = el('div', 'credits-role', c.role);
+                const txt = el('div', 'credits-text', c.text);
+
+                cBox.append(badge, avatarFrame, name, role, txt);
+                page.appendChild(cBox);
+            }
+
+            const nav = el('div', 'nav');
+            if (i > 0) {
+                const back = el('button', 'btn ghost', 'ย้อนกลับ');
+                back.onclick = () => go(current - 1);
+                nav.appendChild(back);
+            }
+            if (!isLast) {
+                const next = el('button', 'btn', 'ถัดไป');
+                next.onclick = () => go(current + 1);
+                nav.appendChild(next);
+            }
+            page.appendChild(nav);
+        }
+
+        function go(n) {
+            current = n;
+            stage.innerHTML = '';
+            decorWrapper.innerHTML = ''; 
+            
+            const page = el('div', 'page');
+            stage.appendChild(page);
+
+            const cardContainer = document.getElementById('cardContainer');
+            const w = n > 0 ? CONFIG.pages[n - 1] : null;
+            if (w && w.gallery) {
+                cardContainer.classList.add('large-card');
+            } else {
+                cardContainer.classList.remove('large-card');
+            }
+
+            if (n === 0) {
+                renderGame(page);
+            } else {
+                renderWish(page, n - 1);
+            }
+            renderDots();
+        }
+        
+        go(0);
+    </script>
+</body>
+</html>
